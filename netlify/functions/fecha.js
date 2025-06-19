@@ -1,43 +1,24 @@
 exports.handler = async (event) => {
-  const zona = event.queryStringParameters?.zona;
-
-  if (!zona) {
-    return {
-      statusCode: 400,
-      body: 'Error: zona no especificada',
-    };
-  }
+  const zona = event.queryStringParameters.zona || 'America/Lima';
 
   try {
-    const ahora = new Date();
-    const partes = new Intl.DateTimeFormat('sv-SE', {
+    const fecha = new Intl.DateTimeFormat('sv-SE', {
       timeZone: zona,
       year: 'numeric',
       month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    }).formatToParts(ahora);
-
-    const mapa = {};
-    partes.forEach(({ type, value }) => {
-      mapa[type] = value;
-    });
-
-    const fechaISO = `${mapa.year}-${mapa.month}-${mapa.day}T${mapa.hour}:${mapa.minute}:${mapa.second}`;
+      day: '2-digit'
+    }).format(new Date());
 
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'text/plain',
       },
-      body: fechaISO, // Ejemplo: 2025-06-19T23:45:02
+      body: fecha,
     };
   } catch (error) {
     return {
-      statusCode: 200,
+      statusCode: 400,
       body: 'Error: zona inválida',
     };
   }
