@@ -1,13 +1,18 @@
 exports.handler = async (event) => {
-  const zona = event.queryStringParameters.zona || 'America/Lima';
+  const zona = event.queryStringParameters?.zona;
+
+  if (!zona) {
+    return {
+      statusCode: 400,
+      body: 'Error: zona no especificada',
+    };
+  }
 
   try {
-    const fecha = new Intl.DateTimeFormat('sv-SE', {
+    const fecha = new Date().toLocaleString('sv-SE', {
       timeZone: zona,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).format(new Date());
+      hour12: false
+    }).replace(' ', 'T'); // Resultado: 2025-06-19T22:15:00
 
     return {
       statusCode: 200,
@@ -18,7 +23,7 @@ exports.handler = async (event) => {
     };
   } catch (error) {
     return {
-      statusCode: 400,
+      statusCode: 200,
       body: 'Error: zona inválida',
     };
   }
