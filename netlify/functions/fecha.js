@@ -9,17 +9,31 @@ exports.handler = async (event) => {
   }
 
   try {
-    const fecha = new Date().toLocaleString('sv-SE', {
+    const ahora = new Date();
+    const partes = new Intl.DateTimeFormat('sv-SE', {
       timeZone: zona,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
       hour12: false
-    }).replace(' ', 'T'); // Resultado: 2025-06-19T22:15:00
+    }).formatToParts(ahora);
+
+    const mapa = {};
+    partes.forEach(({ type, value }) => {
+      mapa[type] = value;
+    });
+
+    const fechaISO = `${mapa.year}-${mapa.month}-${mapa.day}T${mapa.hour}:${mapa.minute}:${mapa.second}`;
 
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'text/plain',
       },
-      body: fecha,
+      body: fechaISO, // Ejemplo: 2025-06-19T23:45:02
     };
   } catch (error) {
     return {
