@@ -2,19 +2,19 @@ exports.handler = async (event) => {
   const zona = event.queryStringParameters.zona || 'America/Lima';
 
   try {
-    const fecha = new Intl.DateTimeFormat('sv-SE', {
+    const fecha = new Date().toLocaleString('sv-SE', {
       timeZone: zona,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).format(new Date());
+      hour12: false,
+    });
+
+    const fechaIso = new Date(fecha).toISOString();
 
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'text/plain',
       },
-      body: fecha,
+      body: fechaIso,
     };
   } catch (error) {
     return {
